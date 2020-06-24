@@ -76,7 +76,7 @@ class Hypixel(commands.Cog):
 
     @commands.command(aliases=['ginfo', 'hginfo', 'hg'])
     async def hguildinfo(self, ctx, *, dirtygname: str):
-        try:
+       try:
             gname = dirtygname.replace(" ", "%20")
             link = f"https://api.hypixel.net/findGuild?key={config._hypixelKey}&byName={gname}" #raw key
             r = requests.get(link)
@@ -100,15 +100,15 @@ class Hypixel(commands.Cog):
                                 explist.append(ass)
                         except KeyError:
                             continue 
-                    explist.sort()
+                    explist.sort(reverse = True)
                     top5 = list(itertools.islice(explist, smallerone))
-                    if len(guild.JSON['members']) == 5:
-                        return f"#1 - {top5[0]}\n#2 - {top5[1]}\n#3 - {top5[2]}\n#4 - {top5[3]}"
                     if len(guild.JSON['members']) == 4:
-                        return f"#1 - {top5[0]}\n#2 - {top5[1]}\n#3 - {top5[2]}"
+                        return f"#1 - {top5[0]}\n#2 - {top5[1]}\n#3 - {top5[2]}\n#4 - {top5[3]}"
                     if len(guild.JSON['members']) == 3:
-                        return f"#1 - {top5[0]}\n#2 - {top5[1]}"
+                        return f"#1 - {top5[0]}\n#2 - {top5[1]}\n#3 - {top5[2]}"
                     if len(guild.JSON['members']) == 2:
+                        return f"#1 - {top5[0]}\n#2 - {top5[1]}"
+                    if len(guild.JSON['members']) == 1:
                         return f"The only one - {top5[0]}"
                     else:
                         return f"#1 - {top5[0]}\n#2 - {top5[1]}\n#3 - {top5[2]}\n#4 - {top5[3]}\n#5 - {top5[4]}"
@@ -145,60 +145,6 @@ class Hypixel(commands.Cog):
             await ctx.send(embed=embed)
         except Exception:
             await ctx.send(traceback.format_exc())
-
-    @commands.command(aliases=['bedwars', 'binfo', 'bwinfo'])
-    async def hbedwars(self, ctx, username: str):
-        try:
-            player = hypixel.Player(username)
-            embed = discord.Embed(description=f"Level {player.JSON['achievements']['bedwars_level']}")
-            embed.title = f"{player.getName()}'s Bedwars Stats"
-            embed.set_thumbnail(url=f"https://crafatar.com/avatars/{player.UUID}?size=64")
-            if ctx.me.color is not None:
-                embed.color = ctx.me.color
-            try:
-                embed.add_field(name='Beds Broken', value="{:,}".format(player.JSON['achievements']['bedwars_beds']))
-            except KeyError:
-                embed.add_field(name='Beds Broken', value="None. They're innocent, your honor.")
-            embed.add_field(name='Coins', value=f"{player.JSON['stats']['Bedwars']['coins']}")
-            embed.add_field(name='Winstreak', value=f"{player.JSON['stats']['Bedwars']['winstreak']}")
-            embed.add_field(name='Wins', value="{:,}".format(player.JSON['achievements']['bedwars_wins']))
-            embed.add_field(name='Losses', value="{:,}".format(player.JSON['stats']['Bedwars']['losses_bedwars']))
-            embed.add_field(name='Kills', value=f"{player.JSON['stats']['Bedwars']['kills_bedwars']}")
-            embed.add_field(name='Final Kills', value=f"{player.JSON['stats']['Bedwars']['final_kills_bedwars']}")
-            embed.add_field(name='Deaths', value=f"{player.JSON['stats']['Bedwars']['deaths_bedwars']}")
-            embed.add_field(name='Final Deaths', value=f"{player.JSON['stats']['Bedwars']['final_deaths_bedwars']}")
-            embed.add_field(name='Emeralds collected',
-                            value=f"{player.JSON['stats']['Bedwars']['emerald_resources_collected_bedwars']}")
-            embed.add_field(name='Diamonds collected',
-                            value=f"{player.JSON['stats']['Bedwars']['diamond_resources_collected_bedwars']}")
-            embed.add_field(name='Gold collected',
-                            value=f"{player.JSON['stats']['Bedwars']['gold_resources_collected_bedwars']}")
-            embed.add_field(name='Iron collected',
-                            value=f"{player.JSON['stats']['Bedwars']['iron_resources_collected_bedwars']}")
-            wdr = int(player.JSON['achievements']['bedwars_wins'])/int(player.JSON['stats']['Bedwars']['losses_bedwars'])
-            kdr = int(player.JSON['stats']['Bedwars']['kills_bedwars'])/int(player.JSON['stats']['Bedwars']['deaths_bedwars'])
-            fkdr = int(player.JSON['stats']['Bedwars']['final_kills_bedwars']) / int(player.JSON['stats']['Bedwars']['final_deaths_bedwars'])
-            awdr = '{:,.2f}'.format(wdr)
-            akdr = '{:,.2f}'.format(kdr)
-            afkdr = '{:,.2f}'.format(fkdr)
-            embed.add_field(name='Win/Loss Ratio', value=f"{awdr}")
-            embed.add_field(name='Kill/Death Ratio', value=f"{akdr}")
-            embed.add_field(name='Final Kill/Final Death Ratio', value=f"{afkdr}")
-            if sys.platform == "windows":
-                embed.set_footer(
-                    text=f"Requested by: {ctx.message.author} / {datetime.fromtimestamp(time.time()).strftime('%A, %B %#d, %Y at %#I:%M %p %Z')}",
-                    icon_url=ctx.message.author.avatar_url)
-            elif sys.platform == "linux":
-                embed.set_footer(
-                    text=f"Requested by: {ctx.message.author} / {datetime.fromtimestamp(time.time()).strftime('%A, %B %-d, %Y at %-I:%M %p %Z')}",
-                    icon_url=ctx.message.author.avatar_url)
-            await ctx.send(embed=embed)
-        except hypixel.PlayerNotFoundException:
-            await ctx.send("Player not found! Try another UUID or username.")
-        except KeyError:
-            await ctx.send("This user has never played Bed Wars before.")
-        except Exception:
-            await ctx.send(traceback.print_exc())
 
     @commands.command(aliases=['skywars', 'sinfo', 'swinfo'])
     async def hskywars(self, ctx, username: str):
