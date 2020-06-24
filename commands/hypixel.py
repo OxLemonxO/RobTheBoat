@@ -86,29 +86,29 @@ class Hypixel(commands.Cog):
             def t5exp():
                 try:
                     explist = []
-                    finallist = []
                     todaysdate = str(datetime.now().date().isoformat())
                     if 5 <= len(guild.JSON['members']):
                         smallerone = len(guild.JSON['members'])
                     else:
                         smallerone = 5
                     for w in range(0, len(guild.JSON['members'])):
-                        print("today's date var is " + todaysdate + " and w is " + str(w))
-                        if guild.JSON['members'][w]['expHistory'][todaysdate] == 0:
-                            return
-                        else:
-                            ass = guild.JSON['members'][w]['expHistory'][todaysdate]
-                            explist.append(ass)
-                            print(explist)
+                        try:
+                            if guild.JSON['members'][w]['expHistory'][todaysdate] == 0:
+                                continue
+                            else:
+                                ass = guild.JSON['members'][w]['expHistory'][todaysdate]
+                                explist.append(ass)
+                        except KeyError:
+                            continue 
                     explist.sort()
-                    top5 = list(itertools.islice(finallist, smallerone))
-                    if len(guild.JSON['members']) == 4:
+                    top5 = list(itertools.islice(explist, smallerone))
+                    if len(guild.JSON['members']) == 5:
                         return f"#1 - {top5[0]}\n#2 - {top5[1]}\n#3 - {top5[2]}\n#4 - {top5[3]}"
-                    if len(guild.JSON['members']) == 3:
+                    if len(guild.JSON['members']) == 4:
                         return f"#1 - {top5[0]}\n#2 - {top5[1]}\n#3 - {top5[2]}"
-                    if len(guild.JSON['members']) == 2:
+                    if len(guild.JSON['members']) == 3:
                         return f"#1 - {top5[0]}\n#2 - {top5[1]}"
-                    if len(guild.JSON['members']) == 1:
+                    if len(guild.JSON['members']) == 2:
                         return f"The only one - {top5[0]}"
                     else:
                         return f"#1 - {top5[0]}\n#2 - {top5[1]}\n#3 - {top5[2]}\n#4 - {top5[3]}\n#5 - {top5[4]}"
